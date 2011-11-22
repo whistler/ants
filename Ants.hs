@@ -1,33 +1,8 @@
-module Ants
-  (
-    -- Data structures
-    Owner (..)
-  , Ant (..)
-  , Direction (..)
-  , GameParams (..)
-  , GameState (..)
-  , Order (..)
-  , World
-
-    -- Utility functions
-  , direction
-  , distance
-  , enemyAnts
-  , enemyHills
-  , myAnts
-  , myHills
-  , occupied
-  , order2point
-  , passable
-  , timeRemaining
-  , unoccupied
-  , visible
-
-    -- main function
-  , game
-  ) where
+module Ants where 
 
 import Control.Applicative
+
+
 import Control.Monad.ST
 
 import Data.Array
