@@ -233,6 +233,7 @@ data Order = Order
   , directionOrder :: Direction
   } deriving (Show)
 
+--Moves the given point one step in the given direction
 move :: Direction -> Point -> Point
 move dir p
   | dir == North = (row p - 1, col p)
@@ -240,20 +241,25 @@ move dir p
   | dir == West  = (row p, col p - 1)
   | otherwise    = (row p, col p + 1)
 
+--Check if order trys to move ant onto water
 passable :: World -> Order -> Bool
 passable w order =
   let newPoint = move (directionOrder order) (pointAnt $ ant order)
   in  tile (w %! newPoint) /= Water
 
+--Check if order trys to move ant to another ant, food or water
+-- ?should enemy hill be included in this?
 occupied :: World -> Order -> Bool
 occupied w order = 
   let newPoint = move (directionOrder order) (pointAnt $ ant order)
       t = tile (w %! newPoint)
   in  isAnt t || t == FoodTile || t == Water
 
+--Check if order trys to move ant to an empty(land) position.
 unoccupied :: World -> Order -> Bool
 unoccupied w order = not $ occupied w order
 
+--Send out the order to server
 issueOrder :: Order -> IO ()
 issueOrder order = do
   let srow = (show . row . pointAnt . ant) order
@@ -261,10 +267,13 @@ issueOrder order = do
       sdir = (show . directionOrder) order
   putStrLn $ "o " ++ srow ++ " " ++ scol ++ " " ++ sdir
 
+--Convert number to player
 toOwner :: Int -> Owner
 toOwner 0 = Me
 toOwner a = Enemy a
 
+--Get direction from two points
+--Not sure what Maybe and the tuple are for? 
 direction :: World -> Point -> Point -> (Maybe Direction, Maybe Direction)
 direction world source dest
   | x1 == x2 = (Nothing, Just ydir)
@@ -283,6 +292,7 @@ direction world source dest
                  then if y1 >= y2 then West else East
                  else if y1 >= y2 then East else West
 
+--Returns the new direction of ant after order
 order2point :: Order -> Point
 order2point o = move (directionOrder o) (pointAnt . ant $ o)
 
